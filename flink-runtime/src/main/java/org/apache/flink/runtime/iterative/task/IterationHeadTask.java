@@ -317,11 +317,6 @@ public class IterationHeadTask<X, Y, S extends Function, OT> extends AbstractIte
                     SolutionSetBroker.instance().handIn(brokerKey, solutionSet);
                 }
 
-                if (waitForSolutionSetUpdate) {
-                    solutionSetUpdateBarrier = new SolutionSetUpdateBarrier();
-                    SolutionSetUpdateBarrierBroker.instance()
-                            .handIn(brokerKey, solutionSetUpdateBarrier);
-                }
             } else {
                 // bulk iteration case
                 @SuppressWarnings("unchecked")
@@ -329,11 +324,11 @@ public class IterationHeadTask<X, Y, S extends Function, OT> extends AbstractIte
                 solutionTypeSerializer = solSer;
 
                 // = termination Criterion tail
-                if (waitForSolutionSetUpdate) {
-                    solutionSetUpdateBarrier = new SolutionSetUpdateBarrier();
-                    SolutionSetUpdateBarrierBroker.instance()
-                            .handIn(brokerKey, solutionSetUpdateBarrier);
-                }
+            }
+            if (waitForSolutionSetUpdate) {
+                solutionSetUpdateBarrier = new SolutionSetUpdateBarrier();
+                SolutionSetUpdateBarrierBroker.instance()
+                        .handIn(brokerKey, solutionSetUpdateBarrier);
             }
 
             // instantiate all aggregators and register them at the iteration global registry

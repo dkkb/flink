@@ -19,10 +19,13 @@ package org.apache.flink.streaming.connectors.kinesis.model;
 
 import com.amazonaws.services.kinesis.model.Shard;
 
+import java.util.regex.Pattern;
+
 /** DynamoDB streams shard handle format and utilities. */
 public class DynamoDBStreamsShardHandle extends StreamShardHandle {
     public static final String SHARDID_PREFIX = "shardId-";
     public static final int SHARDID_PREFIX_LEN = SHARDID_PREFIX.length();
+    private static final Pattern shardIdPattern = Pattern.compile("^shardId-\\d{20}-{0,1}\\w{0,36}");
 
     public DynamoDBStreamsShardHandle(String streamName, Shard shard) {
         super(streamName, shard);
@@ -54,7 +57,7 @@ public class DynamoDBStreamsShardHandle extends StreamShardHandle {
      * @param shardId shard Id
      * @return boolean indicate if the given shard Id is valid
      */
-    public static boolean isValidShardId(String shardId) {
-        return shardId == null ? false : shardId.matches("^shardId-\\d{20}-{0,1}\\w{0,36}");
+    public static boolean isValidShardId(String shardId) { // TODO: other regex
+        return shardId != null && shardIdPattern.matcher(shardId).matches();
     }
 }

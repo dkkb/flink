@@ -235,6 +235,8 @@ public class MutableHashTable<BT, PT> implements MemorySegmentSource {
     /** Flag to enable/disable bloom filters for spilled partitions */
     private final boolean useBloomFilters;
 
+    /** Flag to enable/disable bloom filters for spilled partitions */
+    private final boolean useCuckooFilters;
     // ------------------------------------------------------------------------
 
     /** The partitions that are built by processing the current partition. */
@@ -337,6 +339,7 @@ public class MutableHashTable<BT, PT> implements MemorySegmentSource {
                 comparator,
                 memorySegments,
                 ioManager,
+                false,
                 true);
     }
 
@@ -348,6 +351,7 @@ public class MutableHashTable<BT, PT> implements MemorySegmentSource {
             TypePairComparator<PT, BT> comparator,
             List<MemorySegment> memorySegments,
             IOManager ioManager,
+            boolean useCuckooFilters,
             boolean useBloomFilters) {
         this(
                 buildSideSerializer,
@@ -358,6 +362,7 @@ public class MutableHashTable<BT, PT> implements MemorySegmentSource {
                 memorySegments,
                 ioManager,
                 DEFAULT_RECORD_LEN,
+                useCuckooFilters,
                 useBloomFilters);
     }
 
@@ -370,6 +375,7 @@ public class MutableHashTable<BT, PT> implements MemorySegmentSource {
             List<MemorySegment> memorySegments,
             IOManager ioManager,
             int avgRecordLen,
+            boolean useCuckooFilters,
             boolean useBloomFilters) {
         // some sanity checks first
         if (memorySegments == null) {
@@ -391,6 +397,7 @@ public class MutableHashTable<BT, PT> implements MemorySegmentSource {
         this.availableMemory = memorySegments;
         this.ioManager = ioManager;
         this.useBloomFilters = useBloomFilters;
+        this.useCuckooFilters = useCuckooFilters;
 
         this.avgRecordLen =
                 avgRecordLen > 0
@@ -870,6 +877,10 @@ public class MutableHashTable<BT, PT> implements MemorySegmentSource {
         }
     }
 
+    private void initCuckooFilter(){
+
+    }
+
     private int getEstimatedMaxBucketEntries(
             int numBuffers, int bufferSize, int numBuckets, int recordLenBytes) {
         final long totalSize = ((long) bufferSize) * numBuffers;
@@ -1288,6 +1299,8 @@ public class MutableHashTable<BT, PT> implements MemorySegmentSource {
         this.numBuckets = numBuckets;
 
         if (useBloomFilters) {
+            initBloomFilter(numBuckets);
+        } else if (useCuckooFilters) {
             initBloomFilter(numBuckets);
         }
     }

@@ -917,7 +917,7 @@ public class KinesisDataFetcher<T> {
      * returned list of shards 3. Update the subscribedStreamsToLastDiscoveredShardIds state so that
      * we won't get shards that we have already seen before the next time this function is called
      */
-    public List<StreamShardHandle> discoverNewShardsToSubscribe() throws InterruptedException {
+    public List<StreamShardHandle> discoverNewShardsToSubscribe() throws InterruptedException { // TODO: need to be improve in for loop
 
         List<StreamShardHandle> newShardsToSubscribe = new LinkedList<>();
 

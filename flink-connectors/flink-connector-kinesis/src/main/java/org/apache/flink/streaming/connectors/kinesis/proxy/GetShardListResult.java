@@ -53,11 +53,7 @@ public class GetShardListResult {
     }
 
     public List<StreamShardHandle> getRetrievedShardListOfStream(String stream) {
-        if (!streamsToRetrievedShardList.containsKey(stream)) {
-            return null;
-        } else {
-            return streamsToRetrievedShardList.get(stream);
-        }
+        return streamsToRetrievedShardList.getOrDefault(stream, null);
     }
 
     public StreamShardHandle getLastSeenShardOfStream(String stream) {
